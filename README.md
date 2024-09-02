@@ -1,6 +1,6 @@
 # Hiearchal Animation
 ## Project Description
-The project was originally built utilising Directx11  utlising the legacy [DirectX SDK](https://www.microsoft.com/en-gb/download/details.aspx?id=6812) it is has now suggested to utilise the modern Windows SDK instead. Instead of implementing the newer SDK for DirectX11 I have decided to learn DirectX12 to update this project. There are more details contained within the respository archiving my learning of this updated SDK [found here](https://github.com/MoAgilah/Introduction-to-Game-Programming-with-DirectX12).
+The project was originally built utilising Directx11  utlising the legacy [DirectX SDK](https://www.microsoft.com/en-gb/download/details.aspx?id=6812) it is has now suggested to utilise the modern Windows SDK instead. Instead of implementing the newer SDK for DirectX11 I have decided to learn DirectX12 to update this project. There are more details contained within the respository archiving my learning of this updated SDK [found here](https://github.com/MoAgilah/Introduction-to-Game-Programming-with-DirectX12).\
 The project itself demonstrates the following 3D rendering techniques:
 - Height map rendering
 - An model animation made up of multiple smaller components.
