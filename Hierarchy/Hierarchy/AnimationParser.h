@@ -3,6 +3,7 @@
 
 #include "Application.h"
 #include <vector>
+#include <string>
 
 struct anim
 {
