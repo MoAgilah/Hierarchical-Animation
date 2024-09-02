@@ -1,0 +1,90 @@
+#include "Animation.h"
+
+bool Animation::animReady = false;
+
+Animation::Animation(const string& fName, const string& afName,const float& scalar)
+{
+	if (Application::aniP->LoadFromFile(fName, afName)){
+		ani = Application::aniP->PrepAnimationData(scalar);
+		SetKeyFrames();
+	}
+	isActive = false;
+	animReady = true;
+}
+
+
+Animation::~Animation()
+{
+}
+
+
+void Animation::Animate(const float& t)
+{
+	XMVECTOR pVec;
+	XMMATRIX mRotX, mRotY, mRotZ, mTrans, worldMat;
+	
+	if (animReady)
+	{
+		isActive = true; 
+		//t is before or the animation started so return first key frame
+		if (t <= keyFrames.front())
+		{
+			for (int i = 0; i < 4; i = i + 4)
+			{
+				//trans
+				if (ani[i].kframe.front() == keyFrames.front())
+				{
+					pVec = XMLoadFloat4(&XMFLOAT4(ani[i].val[0], ani[i].val[1], ani[i].val[2], 0));
+					mTrans = XMMatrixTranslationFromVector(pVec);
+				}
+
+				//rotX
+				if (ani[i+1].kframe.front() == keyFrames.front())
+				{
+					mRotX = XMMatrixRotationX(XMConvertToRadians(ani[i+1].val.front()));
+				}
+
+				//rotY
+				if (ani[i + 2].kframe.front() == keyFrames.front())
+				{
+					mRotY = XMMatrixRotationX(XMConvertToRadians(ani[i+2].val.front()));
+				}
+
+				//rotZ
+				if (ani[i + 3].kframe.front() == keyFrames.front())
+				{
+					mRotZ = XMMatrixRotationX(XMConvertToRadians(ani[i+3].val.front()));
+				}
+
+				worldMat = mRotX * mRotZ *mRotY * mTrans;
+				int x = 1;
+				//s_hierachy->GetByName(ani[i].name())->UpdateWorld(worldMat);
+
+			}
+		}
+
+	}
+}
+
+float Animation::GetStartTime()
+{
+	return keyFrames.front();
+}
+
+float Animation::GetEndTime()
+{
+	return keyFrames.back();
+}
+
+void Animation::SetKeyFrames()
+{
+	keyFrames = ani[0].kframe;
+	for (int i = 1; i < ani.size(); ++i)
+	{
+		if (keyFrames.size() < ani[i].kframe.size())
+		{
+			keyFrames = ani[i].kframe;
+		}
+	}
+}
+

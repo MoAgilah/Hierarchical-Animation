@@ -1,0 +1,51 @@
+#ifndef AnimationControllerH
+#define AnimationControllerH
+
+#include "Animation.h"
+#include "AnimationParser.h"
+#include "MeshComponent.h"
+#include <map>
+
+struct CFrame
+{
+	string bName;
+	XMFLOAT4 pos;
+	XMFLOAT4 rot;
+};
+
+__declspec(align(16)) class AnimationController
+{
+public:
+	AnimationController(const XMFLOAT3& iPos, const XMFLOAT3& iRot, const double& scalar);
+	~AnimationController();
+	void LoadAnimation(map<string, MeshComponent*>& bHierarchy, const string& fName, const string& aName, const double& sF = 1.0, const bool& sLoop = true);
+	void Animate(const float& time, map<string, MeshComponent*>& bHierarchy);
+	Animation* GetClipByName(const string& name);
+	void ChangeAnimation(Animation* newClip);
+private:
+	XMVECTOR SmoothStep(XMVECTOR V0, XMVECTOR V1, float t);
+	void SetInitialAnimation(Animation* initial);
+	void StoreCurrentFrame(map<string, MeshComponent*>& bHierarchy);
+	void SetUpCFrameVec();
+	XMFLOAT3 initP, initR;
+	double sF;
+	double timer;
+	int strideNum;
+	bool ShouldLoop;
+	vector<anim> c_Anim;
+	vector<float> c_keyframes;
+	vector<CFrame> currentFrame;
+	static map<string, Animation*> animations;
+public:
+	void* operator new(size_t i)
+	{
+		return _mm_malloc(i, 16);
+	}
+
+		void operator delete(void* p)
+	{
+		_mm_free(p);
+	}
+};
+
+#endif;

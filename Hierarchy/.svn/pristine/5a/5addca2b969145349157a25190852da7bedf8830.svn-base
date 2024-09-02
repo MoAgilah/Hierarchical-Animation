@@ -1,0 +1,211 @@
+#include "Aeroplane.h"
+#include <fstream>
+#include <sstream> 
+
+Hiearchy* Aeroplane::s_Hiearchie = nullptr;
+BulletPool* Aeroplane::bPool = nullptr;
+
+bool Aeroplane::s_bResourcesReady = false;
+
+Aeroplane::Aeroplane(XMFLOAT3 pos, XMFLOAT3 rot)
+{	
+	s_Hiearchie = new Hiearchy("Plane", "pHierarchy.txt", pos, rot,1);
+	bPool = new BulletPool();
+	m_mCamWorldMatrix = XMMatrixIdentity();
+
+	m_v4CamOff = XMFLOAT4(0.0f, 4.5f, -15.0f, 0.0f);
+	m_v4CamRot = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	m_vCamWorldPos = XMVectorZero();
+	m_vForwardVector = XMVectorZero();
+
+	m_fSpeed = 0.0f;
+	m_DelayTimer = 0;
+
+	m_bGunCam = false;
+	justFired = false;
+}
+
+Aeroplane::~Aeroplane(void)
+{
+	delete s_Hiearchie;
+	
+	delete bPool;
+}
+
+void Aeroplane::CreateHierarchie(void)
+{
+	s_Hiearchie->LoadFromFile();
+}
+
+void Aeroplane::Update(bool bPlayerControl, const float& dt)
+{
+	UpdateMatrices();
+
+	if (bPlayerControl)
+	{
+		// You can also impose a take off seeepd of 0.5 if you like
+		//Make the plane pitch upwards when you press "Q" 
+		if (Application::s_pApp->IsKeyPressed('Q'))
+		{
+			if (s_Hiearchie->GetRoot()->GetLocRot().x >= -60)
+			{
+				s_Hiearchie->GetRoot()->GetLocRot().x -= 1;
+			}
+		}//return to level when released
+		else  if (!Application::s_pApp->IsKeyPressed('Q') || !Application::s_pApp->IsKeyPressed('A'))
+		{
+			if (s_Hiearchie->GetRoot()->GetLocRot().x < 0)
+			{
+				s_Hiearchie->GetRoot()->GetLocRot().x += 1;
+			}
+		}
+
+		//Make the plane pitch downwards when you press "A" 
+		if (Application::s_pApp->IsKeyPressed('A'))
+		{
+			if (s_Hiearchie->GetRoot()->GetLocRot().x <= 60)
+			{
+				s_Hiearchie->GetRoot()->GetLocRot().x += 1;
+			}
+		}//return to level when released
+		else  if (!Application::s_pApp->IsKeyPressed('Q') || !Application::s_pApp->IsKeyPressed('A'))
+		{
+			if (s_Hiearchie->GetRoot()->GetLocRot().x > 0)
+			{
+				s_Hiearchie->GetRoot()->GetLocRot().x -= 1;
+			}
+		}
+
+		// Step 3: Make the plane yaw and roll left when you press "O" 
+		if (Application::s_pApp->IsKeyPressed('P'))
+		{
+
+			if (s_Hiearchie->GetRoot()->GetLocRot().z >= -20)
+			{
+				s_Hiearchie->GetRoot()->GetLocRot().z -= 1;
+			}
+			s_Hiearchie->GetRoot()->GetLocRot().y += 1;
+		}//return to level when released
+		else  if (!Application::s_pApp->IsKeyPressed('O') || !Application::s_pApp->IsKeyPressed('P'))
+		{
+			if (s_Hiearchie->GetRoot()->GetLocRot().z < 0)
+			{
+				s_Hiearchie->GetRoot()->GetLocRot().z += 1;
+			}
+		}
+
+		//Make the plane yaw and roll right when you press "P" 
+		// Minimum roll = -20 degrees
+		if (Application::s_pApp->IsKeyPressed('O'))
+		{
+
+			if (s_Hiearchie->GetRoot()->GetLocRot().z <= 20)
+			{
+				s_Hiearchie->GetRoot()->GetLocRot().z += 1;
+			}
+			s_Hiearchie->GetRoot()->GetLocRot().y -= 1;
+		}// return to level when released
+		else  if (!Application::s_pApp->IsKeyPressed('O') || !Application::s_pApp->IsKeyPressed('P'))
+		{
+			if (s_Hiearchie->GetRoot()->GetLocRot().z > 0)
+			{
+				s_Hiearchie->GetRoot()->GetLocRot().z -= 1;
+			}
+		}
+
+		if (Application::s_pApp->IsKeyPressed(VK_SPACE) && justFired == false)
+		{
+			XMFLOAT4 pos;
+			XMStoreFloat4(&pos, s_Hiearchie->GetByName("gun")->GetWorld().r[3]);
+			XMVECTOR gunForwardVec = s_Hiearchie->GetByName("gun")->GetWorld().r[2];
+
+			XMVECTOR g, t, p, c;
+			g = XMLoadFloat4(&s_Hiearchie->GetByName("gun")->GetLocRot());
+			t = XMLoadFloat4(&s_Hiearchie->GetByName("turret")->GetLocRot());
+			p = XMLoadFloat4(&s_Hiearchie->GetRoot()->GetLocRot());
+			c = g + t + p;
+			XMFLOAT4 rot;
+			XMStoreFloat4(&rot, c);
+
+			bPool->Create(pos, rot, gunForwardVec);
+			justFired = true;
+		}
+	}//end of if player control
+
+	m_fSpeed += 0.001f * dt;
+
+	if (m_fSpeed > 1){ m_fSpeed = 1; }
+
+	if (justFired)
+	{
+		m_DelayTimer += 0.1 * dt;
+	}
+
+	if (m_DelayTimer > 5)
+	{
+		justFired = false;
+		m_DelayTimer = 0;
+	}
+
+	s_Hiearchie->GetByName("prop")->GetLocRot().z += 100 * m_fSpeed;
+	s_Hiearchie->GetByName("turret")->GetLocRot().y += 0.1;
+
+	s_Hiearchie->GetByName("gun")->GetLocRot().x = (sin((float)XMConvertToRadians(s_Hiearchie->GetByName("turret")->GetLocRot().y*4.0f)) * 10.0f) - 10.0f;
+
+	bPool->Update(dt);
+	
+
+	XMVECTOR vCurrPos = XMLoadFloat4(&s_Hiearchie->GetRoot()->GetLocPos());
+	vCurrPos += m_vForwardVector * m_fSpeed;
+	XMStoreFloat4(&s_Hiearchie->GetRoot()->GetLocPos(), vCurrPos);
+}
+
+void Aeroplane::Draw(void)
+{
+	s_Hiearchie->GetRoot()->Draw();
+	bPool->Draw();
+}
+
+
+void Aeroplane::SetWorldPosition(float fX, float fY, float fZ)
+{
+	s_Hiearchie->GetRoot()->GetLocPos() = XMFLOAT4(fX, fY, fZ, 0.0f);
+	s_Hiearchie->GetRoot()->updateMat();
+}
+
+void Aeroplane::UpdateMatrices(void)
+{
+	XMVECTOR pVec;
+	XMMATRIX mRotY,mTrans;
+	XMMATRIX mPlaneCameraRot, mForwardMatrix;
+
+	s_Hiearchie->GetRoot()->updateMat();
+
+	mRotY = XMMatrixRotationY(XMConvertToRadians(s_Hiearchie->GetRoot()->GetLocRot().y));
+	pVec = XMLoadFloat4(&s_Hiearchie->GetRoot()->GetLocPos());
+
+	mTrans = XMMatrixTranslationFromVector(pVec);
+
+	//Also calculate mPlaneCameraRot which ignores rotations in Z and X for the camera to parent to
+	pVec = XMLoadFloat4(&m_v4CamOff);
+	m_mCamWorldMatrix = XMMatrixTranslationFromVector(pVec) * mRotY * mTrans;
+	
+	m_vForwardVector = s_Hiearchie->GetRoot()->GetWorld().r[2];
+	
+	pVec = XMLoadFloat4(&s_Hiearchie->GetByName("gun")->GetLocPos());
+	mTrans = XMMatrixTranslationFromVector(pVec);
+
+	XMMATRIX mGunTutTrans = mTrans * s_Hiearchie->GetByName("turret")->GetWorld();
+	
+	mRotY = XMMatrixRotationY(XMConvertToRadians(s_Hiearchie->GetByName("gun")->GetLocRot().y));
+
+	// between parenting the camera to the plane(without X and Z rotations) and the gun based on m_bGunCam
+	pVec = XMLoadFloat4(&m_v4CamOff);
+	if (m_bGunCam)
+		m_mCamWorldMatrix = XMMatrixTranslationFromVector(pVec) * mRotY * mGunTutTrans;
+
+	// Get the camera's world position (m_vCamWorldPos) out of m_mCameraWorldMatrix
+	m_vCamWorldPos = XMVectorZero();
+	m_vCamWorldPos = XMVector3Transform(m_vCamWorldPos, m_mCamWorldMatrix);
+}

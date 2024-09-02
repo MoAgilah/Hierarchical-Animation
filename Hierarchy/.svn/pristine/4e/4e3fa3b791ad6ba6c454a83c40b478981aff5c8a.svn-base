@@ -1,0 +1,36 @@
+#ifndef AnimationH
+#define AnimationH
+
+#include "Application.h"
+#include "AnimationParser.h"
+#include <string>
+#include <vector>
+
+using namespace std;
+
+//wrapper for an animation
+__declspec(align(16)) class Animation
+{
+public:
+	Animation(const string& fName, const string& afName, const float& scaler = 1.0f);
+	~Animation();
+	void Animate(const float& time);
+private:
+	vector<anim> ani;
+	string name;
+	static bool animReady;
+	bool isActive;
+public:
+	void* operator new(size_t i)
+	{
+		return _mm_malloc(i, 16);
+	}
+
+		void operator delete(void* p)
+	{
+		_mm_free(p);
+	}
+};
+
+#endif
+

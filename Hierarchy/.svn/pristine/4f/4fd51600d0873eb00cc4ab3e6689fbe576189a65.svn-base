@@ -1,0 +1,41 @@
+#include "Animation.h"
+
+Animation::Animation(const string& fName, const string& afName, const double& scalar)
+	:name(afName)
+{
+	if (Application::aniP->LoadFromFile(fName, afName)){
+		ani = Application::aniP->PrepAnimationData(scalar);
+		SetKeyFrames();
+	}
+}
+
+
+Animation::~Animation()
+{
+}
+
+void Animation::SetKeyFrames()
+{
+	keyframes = ani[0].kframe;
+	for (int i = 1; i < ani.size(); ++i)
+	{
+		if (keyframes.size() < ani[i].kframe.size())
+		{
+			keyframes = ani[i].kframe;
+		}
+	}
+}
+
+float Animation::GetClipStartTime()const
+{
+	return 1.0f;
+}
+
+float Animation::GetClipEndTime()const
+{
+	return 1.0f;
+}
+
+
+
+	

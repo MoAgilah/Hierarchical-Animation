@@ -1,0 +1,69 @@
+#include "Bullet.h"
+
+Bullet::Bullet(CommonMesh* Bullet)
+{
+	p_active = false;
+
+	m_mWorldMatrix = XMMatrixIdentity();
+
+	p_Bullet = Bullet;
+	
+	gravity = XMLoadFloat4(&XMFLOAT4(0, -0.981, 0, 0));
+}
+
+Bullet::~Bullet()
+{
+	delete p_Bullet;
+}
+
+void Bullet::Activate(const XMMATRIX& gunMat, const XMVECTOR& Direction)
+{
+	p_active = true;
+	
+	m_vForwardVector = Direction;
+
+	m_mWorldMatrix = XMMatrixScaling(0.1, 0.1, 0.1) * gunMat;
+
+	timer = 0.0f;
+}
+
+Bullet* Bullet::getNext() const 
+{ 
+ 	return next;
+}
+
+void Bullet::setNext(Bullet* n) 
+{ 
+	next = n;
+}
+
+bool Bullet::GetActive() const
+{
+	return p_active;
+}
+
+void Bullet::Deactivate()
+{
+	p_active  = false;
+}
+
+bool Bullet::Update(const double& dt)
+{
+	timer += dt;
+
+	UpdateMatrices();
+
+	return timer >= 2;
+}
+
+void Bullet::Draw(void)
+{
+	Application::s_pApp->SetWorldMatrix(m_mWorldMatrix);
+	p_Bullet->Draw();
+}
+
+void Bullet::UpdateMatrices(void)
+{
+	
+	m_mWorldMatrix *= XMMatrixTranslationFromVector(m_vForwardVector);
+}

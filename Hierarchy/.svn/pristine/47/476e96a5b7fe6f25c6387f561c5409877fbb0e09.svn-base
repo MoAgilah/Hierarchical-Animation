@@ -1,0 +1,69 @@
+#ifndef AnimationControllerH
+#define AnimationControllerH
+
+#include "Animation.h"
+#include "AnimationParser.h"
+#include "MeshComponent.h"
+#include <map>
+#include <algorithm>
+
+using namespace std;
+
+struct CFrame
+{
+	string bName;
+	XMFLOAT4 pos;
+	XMFLOAT4 rot;
+};
+
+struct Track
+{
+	vector<anim> AData;
+	vector<float> Keys;
+	vector<CFrame> FData;
+	float Timer;
+	bool active;
+	bool shouldLoop;
+};
+
+__declspec(align(16)) class AnimationController
+{
+public:
+	AnimationController(const XMFLOAT3& iPos, const XMFLOAT3& iRot, const double& scalar);
+	~AnimationController();
+	void LoadAnimation(map<string, MeshComponent*>& bHierarchy, const string& fName, const string& aName, const double& sF = 1.0, const bool& sLoop = true);
+	void AdvanceTime(const double& time, map<string, MeshComponent*>& bHierarchy);
+	Track* GetClipByName(const string& name);
+	void ChangeTrack(const string& name);
+	bool GetIsActive(const string& name);
+private:
+	XMVECTOR SmoothStep(const XMVECTOR& V0, const XMVECTOR& V1, float& t);
+	void SetInitialTrack(Animation* initial);
+	void SetAdditionalTracks(Animation* other);
+	void SetUpCFrameVec(const vector<anim>& aData, vector<CFrame>& FData);
+	void SetUpCFrameVec(const vector<CFrame>& base, vector<CFrame>& FData);
+	void Interpolate(Track* cTrack, const double& time);
+	void InterpolateTracks(vector<Track*> activeTracks, const double& time);
+	void StoreCurrentFrame(vector<CFrame> curr);
+	void UpdateHiearachy(map<string, MeshComponent*>& bHierarchy);
+	XMFLOAT3 initP, initR;
+	vector<Track*> animTracks;
+	int activeTracks;
+	double sF;
+	double timer;
+	int strideNum;
+	vector<CFrame> currFrame;
+	map<string, Track*> allTracks;
+public:
+	void* operator new(size_t i)
+	{
+		return _mm_malloc(i, 16);
+	}
+
+		void operator delete(void* p)
+	{
+		_mm_free(p);
+	}
+};
+
+#endif;

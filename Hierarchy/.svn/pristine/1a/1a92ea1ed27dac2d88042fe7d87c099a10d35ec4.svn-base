@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="HeightMap.cpp" />
+    <ClCompile Include="Hierarchy.cpp">
+      <Filter>Hiearchy</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshComponent.cpp">
+      <Filter>Hiearchy</Filter>
+    </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>Aeroplane\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Aeroplane.cpp">
+      <Filter>Aeroplane</Filter>
+    </ClCompile>
+    <ClCompile Include="Robot.cpp">
+      <Filter>Robot</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxml2.cpp">
+      <Filter>Animation\TinyXML</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationParser.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationController.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletPool.cpp">
+      <Filter>Aeroplane\Bullet</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Application.h" />
+    <ClInclude Include="HeightMap.h" />
+    <ClInclude Include="Hierarchy.h">
+      <Filter>Hiearchy</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshComponent.h">
+      <Filter>Hiearchy</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>Aeroplane\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Aeroplane.h">
+      <Filter>Aeroplane</Filter>
+    </ClInclude>
+    <ClInclude Include="Robot.h">
+      <Filter>Robot</Filter>
+    </ClInclude>
+    <ClInclude Include="tinyxml2.h">
+      <Filter>Animation\TinyXML</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationParser.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationController.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletPool.h">
+      <Filter>Aeroplane\Bullet</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Hiearchy">
+      <UniqueIdentifier>{66b75d45-3be6-4fee-9921-b0eaac6d8a58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Aeroplane">
+      <UniqueIdentifier>{58ade5f0-3b53-4aa6-b98c-c491a9ab5367}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Aeroplane\Bullet">
+      <UniqueIdentifier>{f7f4dd57-7ef8-47ab-834d-64cbbe348395}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Robot">
+      <UniqueIdentifier>{c35533e1-6297-4d01-a5ad-17b510247a68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Animation">
+      <UniqueIdentifier>{bdae9d2f-36b8-417d-a6b0-0e6beaf9f657}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Animation\TinyXML">
+      <UniqueIdentifier>{657a8704-812d-42a0-a523-94506f2a02bf}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,81 @@
+#include "Robot.h"
+
+Hiearchy* Robot::s_Hiearchie = NULL;
+
+bool Robot::s_bResourcesReady = false;
+
+
+Robot::Robot(XMFLOAT3 pos, XMFLOAT3 rot)
+{
+	s_Hiearchie = new Hiearchy("Robot", "rHierarchy.txt", pos, rot, 10);
+
+	m_mCamWorldMatrix = XMMatrixIdentity();
+
+	m_v4CamOff = XMFLOAT4(0.0f, 4.5f, -15.0f, 0.0f);
+	m_v4CamRot = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	m_vCamWorldPos = XMVectorZero();
+	m_vForwardVector = XMVectorZero();
+
+	m_fSpeed = 0.0f;
+
+	m_bRobCam = false;
+}
+
+Robot::~Robot()
+{
+	delete s_Hiearchie;
+}
+
+void Robot::CreateHierarchie(void)
+{
+	s_Hiearchie->LoadFromFile();
+}
+
+void Robot::LoadAnimations()
+{
+	s_Hiearchie->LoadAnimation("Idle");
+	s_Hiearchie->LoadAnimation("Attack");
+	s_Hiearchie->LoadAnimation("Die");
+}
+
+void Robot::Update(bool bPlayerContol)
+{
+	if (bPlayerContol)
+	{
+	}
+	
+	s_Hiearchie->GetRoot()->updateMat();
+}
+
+void Robot::Draw(void)
+{
+	s_Hiearchie->GetRoot()->Draw();
+}
+
+void Robot::SetWorldPosition(float fX, float fY, float fZ)
+{
+	s_Hiearchie->GetRoot()->GetLocPos() = XMFLOAT4(fX, fY, fZ, 0.0f);
+	s_Hiearchie->GetRoot()->updateMat();
+}
+
+void Robot::UpdateMatrices(void)
+{
+	XMVECTOR pVec;
+	XMMATRIX mRotY, mTrans;
+
+	s_Hiearchie->GetRoot()->updateMat();
+
+	mRotY = XMMatrixRotationY(XMConvertToRadians(s_Hiearchie->GetRoot()->GetLocRot().y));
+	pVec = XMLoadFloat4(&s_Hiearchie->GetRoot()->GetLocPos());
+
+	mTrans = XMMatrixTranslationFromVector(pVec);
+
+	XMMATRIX roboCam = mTrans * s_Hiearchie->GetRoot()->GetWorld();
+
+	if (m_bRobCam)
+	{
+		pVec = XMLoadFloat4(&m_v4CamOff);
+		m_mCamWorldMatrix = XMMatrixTranslationFromVector(pVec) * mRotY * roboCam;
+	}
+}

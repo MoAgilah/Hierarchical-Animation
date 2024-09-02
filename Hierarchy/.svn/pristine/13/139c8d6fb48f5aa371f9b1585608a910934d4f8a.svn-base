@@ -1,0 +1,216 @@
+#include "AnimationController.h"
+
+map<string, Animation*> AnimationController::animations;
+
+AnimationController::AnimationController(const XMFLOAT3& iPos, const XMFLOAT3& iRot, const double& scalar)
+	:initP(iPos), initR(iRot), sF(scalar)
+{
+	timer = 0;
+	strideNum = 0;
+	ShouldLoop = false;
+}
+
+
+AnimationController::~AnimationController()
+{
+}
+
+void AnimationController::LoadAnimation(map<string, MeshComponent*>& bHierarchy, const string& fName, const string& aName, const double& sF, const bool& sLoop)
+{
+	MeshComponent* root = bHierarchy.find("root")->second;
+	animations.insert(std::pair<string, Animation*>(aName, new Animation(fName, aName, sLoop, sF)));
+	
+	if (!root->GetHasAnim())
+	{
+		root->SetHasAnim();
+		SetInitialAnimation(GetClipByName(aName));
+	}
+}
+
+Animation*  AnimationController::GetClipByName(const string& name)
+{
+	return animations.find(name)->second;
+}
+
+void AnimationController::ChangeAnimation(Animation* newClip)
+{
+	c_Anim = newClip->GetFrameTrans();
+	c_keyframes = newClip->GetKeyframes();
+	ShouldLoop = newClip->GetShouldLoop();
+}
+
+void AnimationController::Animate(const float& time, map<string, MeshComponent*>& bHierarchy)
+{
+	timer += time;
+
+	XMFLOAT4 trans, rot;
+
+	for (int i = 0; i < c_Anim.size(); i += 4)
+	{
+		if (timer <= c_keyframes.front())
+		{
+			MeshComponent* CurrBone = bHierarchy.find(c_Anim[i].name)->second;
+
+			if (c_Anim[i].name == "root")
+			{
+				trans = XMFLOAT4(*c_Anim[i].val.begin() + initP.x,
+					*(c_Anim[i].val.begin() + 1) + initP.y,
+					*(c_Anim[i].val.begin() + 2) + initP.z, 0);
+				CurrBone->GetLocPos() = trans;
+			}
+			else
+			{
+				trans = XMFLOAT4(*c_Anim[i].val.begin(),
+					*(c_Anim[i].val.begin() + 1),
+					*(c_Anim[i].val.begin() + 2), 0);
+				CurrBone->GetLocPos() = trans;
+			}
+
+			rot = XMFLOAT4(c_Anim[i + 1].val.front(),
+				c_Anim[i + 2].val.front(),
+				c_Anim[i + 3].val.front(), 0);
+			CurrBone->GetLocRot() = rot;
+		}
+		else if (timer >= c_keyframes.back())
+		{
+			MeshComponent* CurrBone = bHierarchy.find(c_Anim[i].name)->second;
+
+			if (c_Anim[i].name == "root")
+			{
+				trans = XMFLOAT4(*(c_Anim[i].val.end() - 3) + initP.x,
+					*(c_Anim[i].val.end() - 2) + initP.y,
+					*(c_Anim[i].val.end() - 1) + initP.z, 0);
+				CurrBone->GetLocPos() = trans;
+			}
+			else
+			{
+				trans = XMFLOAT4(*(c_Anim[i].val.end() - 3),
+					*(c_Anim[i].val.end() - 2),
+					*(c_Anim[i].val.end() - 1), 0);
+				CurrBone->GetLocPos() = trans;
+			}
+
+			rot = XMFLOAT4(c_Anim[i + 1].val.back(),
+				c_Anim[i + 2].val.back(),
+				c_Anim[i + 3].val.back(), 0);
+			CurrBone->GetLocRot() = rot;
+
+			if (ShouldLoop)timer = 0;
+		}
+		else
+		{
+			for (int j = 0; j < c_keyframes.size() - 1; ++j)
+			{
+				if (timer >= c_keyframes[j] && timer <= c_keyframes[j + 1])
+				{
+					float lerpPercent = (timer - c_keyframes[j]) /
+						(c_keyframes[j + 1] - c_keyframes[j]);
+
+					XMVECTOR t1, t2, r1, r2, ft, fr;
+
+					MeshComponent* CurrBone = bHierarchy.find(c_Anim[i].name)->second;
+
+					strideNum = c_Anim[i].val.size() / c_Anim[i].stride;
+
+					if (strideNum > 1)
+					{
+						int f = (j * c_Anim[i].stride);
+						int s = ((j + 1) * c_Anim[i].stride);
+
+						if (CurrBone->GetName() == "root")
+						{
+							trans = XMFLOAT4(c_Anim[i].val[f] + initP.x,
+								c_Anim[i].val[f + 1] + initP.y,
+								c_Anim[i].val[f + 2] + initP.z, 0);
+						}
+						else
+						{
+							trans = XMFLOAT4(c_Anim[i].val[f],
+								c_Anim[i].val[f + 1],
+								c_Anim[i].val[f + 2], 0);
+						}
+
+						t1 = XMLoadFloat4(&trans);
+
+						if (CurrBone->GetName() == "root")
+						{
+							trans = XMFLOAT4(c_Anim[i].val[s] + initP.x,
+								c_Anim[i].val[s + 1] + initP.y,
+								c_Anim[i].val[s + 2] + initP.z, 0);
+						}
+						else
+						{
+							trans = XMFLOAT4(c_Anim[i].val[s],
+								c_Anim[i].val[s + 1],
+								c_Anim[i].val[s + 2], 0);
+						}
+
+						t2 = XMLoadFloat4(&trans);
+
+						ft = SmoothStep(t1, t2, lerpPercent);
+						XMVector4Normalize(ft);
+
+						XMStoreFloat4(&trans, ft);
+
+						CurrBone->GetLocPos() = trans;
+					}
+
+					rot = XMFLOAT4(c_Anim[i + 1].val[j],
+						c_Anim[i + 2].val[j],
+						c_Anim[i + 3].val[j], 0);
+
+					r1 = XMLoadFloat4(&rot);
+
+					rot = XMFLOAT4(c_Anim[i + 1].val[j + 1],
+						c_Anim[i + 2].val[j + 1],
+						c_Anim[i + 3].val[j + 1], 0);
+
+					r2 = XMLoadFloat4(&rot);
+
+					fr = SmoothStep(r1, r2, lerpPercent);
+					XMStoreFloat4(&rot, fr);
+
+					CurrBone->GetLocRot() = rot;
+
+					break;
+				}
+			}
+		}
+	}
+}
+
+XMVECTOR AnimationController::SmoothStep(XMVECTOR V0, XMVECTOR V1, float t)
+{
+	t = (t > 1.0f) ? 1.0f : ((t < 0.0f) ? 0.0f : t);  // Clamp value to 0 to 1
+	t = t*t*(3.f - 2.f*t);
+	return XMVectorLerp(V0, V1, t);
+}
+
+void AnimationController::SetInitialAnimation(Animation* initial)
+{
+	c_Anim = initial->GetFrameTrans();
+	c_keyframes = initial->GetKeyframes();
+	ShouldLoop = initial->GetShouldLoop();
+	SetUpCFrameVec();
+}
+
+void AnimationController::SetUpCFrameVec()
+{
+	int size = c_Anim.size() / 4;
+	for (int i = 0; i < size; ++i)
+	{
+		CFrame Bone;
+		Bone.bName = c_Anim[i * 4].name;
+		currentFrame.resize(i + 1, Bone);
+	}
+}
+
+void AnimationController::StoreCurrentFrame(map<string, MeshComponent*>& bHierarchy)
+{
+	for (int i = 0; i < currentFrame.size() - 1; ++i)
+	{
+		MeshComponent* CurrBone = bHierarchy.find(currentFrame[i].bName)->second;
+		currentFrame[i].pos = CurrBone->GetLocPos();
+		currentFrame[i].pos = CurrBone->GetLocRot();
+	}
+}

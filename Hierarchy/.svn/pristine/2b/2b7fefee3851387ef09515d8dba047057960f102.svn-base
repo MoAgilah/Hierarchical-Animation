@@ -1,0 +1,23 @@
+#ifndef BulletPoolH
+#define BulletPoolH
+
+#include "Bull.h"
+#include <vector>
+#include <assert.h>
+
+#define MaxBullet 20
+
+class BulletPool
+{
+public:
+	BulletPool();
+	~BulletPool();
+	void Create(const XMFLOAT4& pos, const XMFLOAT4& rot, const XMVECTOR& fVec);
+	void Update(const float& deltaTime);
+	void Draw();
+private:
+	std::vector<Bull*> bullets;
+	Bull* firstAvailable;
+};
+
+#endif

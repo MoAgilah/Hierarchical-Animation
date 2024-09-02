@@ -1,0 +1,91 @@
+#include "Bullet.h"
+
+Bullet::Bullet(CommonMesh* Bullet)
+{
+	p_active = false;
+
+	m_mWorldMatrix = XMMatrixIdentity();
+
+	gunMatrix = XMMatrixIdentity();
+
+	p_Bullet = Bullet;
+
+	m_fSpeed = 2.0f;
+	
+	gravity = XMLoadFloat4(&XMFLOAT4(0, -0.981, 0, 0));
+}
+
+Bullet::~Bullet()
+{
+	delete p_Bullet;
+}
+
+void Bullet::Activate(const XMMATRIX& gunMat)
+{
+	p_active = true;
+	//pos
+	XMStoreFloat4(&m_v4Pos, gunMatrix.r[3]);
+
+	//forwardVector
+	m_vForwardVector = gunMatrix.r[2];
+
+	//either use this or
+	gunMatrix = gunMat;
+
+	//or this when figured out how to get the rot out of top three rows
+	m_mWorldMatrix = XMMatrixIdentity();
+
+	timer = 0.0f;
+}
+
+Bullet* Bullet::getNext() const 
+{ 
+ 	return next;
+}
+
+void Bullet::setNext(Bullet* n) 
+{ 
+	next = n;
+}
+
+bool Bullet::GetActive() const
+{
+	return p_active;
+}
+
+void Bullet::Deactivate()
+{
+	p_active  = false;
+}
+
+bool Bullet::Update(const double& dt)
+{
+	timer += dt;
+
+	// Move Forward
+	XMVECTOR vCurrPos = XMLoadFloat4(&m_v4Pos);
+	vCurrPos += m_vForwardVector * m_fSpeed + (gravity * timer);
+	XMStoreFloat4(&m_v4Pos, vCurrPos);
+	UpdateMatrices();
+
+	return timer >= 5;
+}
+
+void Bullet::Draw(void)
+{
+	Application::s_pApp->SetWorldMatrix(m_mWorldMatrix);
+	p_Bullet->Draw();
+}
+
+void Bullet::UpdateMatrices(void)
+{
+	XMVECTOR pVec;
+	XMMATRIX mScale, mRotX, mRotY, mRotZ, mTrans;
+
+	mScale = XMMatrixScaling(0.1, 0.1, 0.1);
+
+	pVec = XMLoadFloat4(&m_v4Pos);
+	mTrans = XMMatrixTranslationFromVector(pVec);
+
+	m_mWorldMatrix = mScale *  mTrans * gunMatrix;
+}

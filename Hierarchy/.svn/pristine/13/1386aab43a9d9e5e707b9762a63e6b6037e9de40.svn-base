@@ -1,0 +1,45 @@
+#ifndef MeshComponentH
+#define MeshComponentH
+
+#include "Application.h"
+#include <string>
+#include <vector>
+
+using namespace std;
+
+__declspec(align(16)) class MeshComponent
+{
+public:
+	MeshComponent(XMFLOAT3 pos = XMFLOAT3(0, 0, 0), XMFLOAT3 rot = XMFLOAT3(0, 0, 0), string hName = "", string mName = "");
+	~MeshComponent();
+	void AddChild(MeshComponent* child);
+	XMFLOAT4& GetLocPos(void);
+	XMFLOAT4& GetLocRot(void);
+	XMMATRIX& GetWorld(void);
+	CommonMesh* GetMesh();
+	string GetName();
+	bool GetHasChild(void);
+	void updateMat(void);
+	void updateChildMat(void);
+	void Draw(void);
+	void DeleteChildren();
+
+	void* operator new(size_t i)
+	{
+		return _mm_malloc(i, 16);
+	}
+
+	void operator delete(void* p)
+	{
+		_mm_free(p);
+	}
+private:
+	XMFLOAT4 localPos;
+	XMFLOAT4 localRot;
+	XMMATRIX worldMat;
+	CommonMesh * mesh;
+	string name;
+	vector<MeshComponent*> children;
+};
+
+#endif

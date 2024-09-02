@@ -1,0 +1,325 @@
+#include "AnimationController.h"
+
+int AnimationController::trackNum;
+
+AnimationController::AnimationController(const XMFLOAT3& iPos, const XMFLOAT3& iRot, const double& scalar)
+	:initP(iPos), initR(iRot), sF(scalar)
+{
+	strideNum = 0;
+	timer = 0;
+	activeTracks = 0;
+}
+
+
+AnimationController::~AnimationController()
+{
+}
+
+void AnimationController::LoadAnimation(map<string, MeshComponent*>& bHierarchy, const string& fName, const string& aName, const double& sF, const bool& sLoop)
+{
+	MeshComponent* root = bHierarchy.find("root")->second;
+	Animation clip(fName, aName, sLoop, sF);
+	if (!root->GetHasAnim())
+	{
+		root->SetHasAnim();
+		SetInitialTrack(&clip);
+	}
+	else
+	{
+		SetAdditionalTracks(&clip);
+	}
+}
+
+Track*  AnimationController::GetClipByName(const string& name)
+{
+	return allTracks.find(name)->second;
+}
+
+void AnimationController::ChangeTrack(const string& name)
+{
+	Track* change = GetClipByName(name);
+	change->active = true;
+	next = change->trackId;
+
+}
+
+bool AnimationController::GetIsActive(const string& name)
+{
+	Track* check = GetClipByName(name);
+	return check->active;
+}
+
+void AnimationController::AdvanceTime(const double& time, map<string, MeshComponent*>& bHierarchy)
+{
+	for (int i = 0; i < animTracks.size(); ++i)
+	{
+		if (animTracks[i]->active)
+		{
+			Interpolate(animTracks[i],time);
+			++activeTracks;
+		}
+	}
+
+	if (activeTracks == 2)
+	{
+		InterpolateTracks(animTracks, time);
+		activeTracks = 0;
+	}
+	else
+	{
+		StoreCurrentFrame(animTracks[curr]->FData);
+		activeTracks = 0;
+	}
+
+	UpdateHiearachy(bHierarchy);
+}
+
+XMVECTOR AnimationController::SmoothStep(const XMVECTOR& V0, const XMVECTOR& V1, float& t)
+{
+	t = (t > 1.0f) ? 1.0f : ((t < 0.0f) ? 0.0f : t);  // Clamp value to 0 to 1
+	t = t*t*(3.f - 2.f*t);
+	return XMVectorLerp(V0, V1, t);
+}
+
+void AnimationController::SetInitialTrack(Animation* initial)
+{
+	Track* init = new Track();
+	init->trackId = trackNum++;
+	init->active = true;
+	init->AData = initial->GetFrameTrans();
+	init->Keys = initial->GetKeyframes();
+	init->shouldLoop = initial->GetShouldLoop();
+	init->Timer = 0;
+	SetUpCFrameVec(init->AData, init->FData);
+	SetUpCFrameVec(init->FData, currFrame);
+	allTracks.insert(std::pair<string, Track*>(initial->GetName(), init));
+	animTracks.push_back(init);
+	curr = init->trackId;
+}
+
+void AnimationController::SetAdditionalTracks(Animation* other)
+{
+	Track *track = new Track();
+	track->trackId = trackNum++;
+	track->active = false;
+	track->AData = other->GetFrameTrans();
+	track->Keys = other->GetKeyframes();
+	track->shouldLoop = other->GetShouldLoop();
+	track->Timer = 0;
+	SetUpCFrameVec(currFrame,track->FData);
+	allTracks.insert(std::pair<string, Track*>(other->GetName(), track));
+	animTracks.push_back(track);
+}
+
+
+void AnimationController::SetUpCFrameVec(const vector<anim>& aData,vector<CFrame>& FData)
+{
+	int size = aData.size() / 4;
+	for (int i = 0; i < size; ++i)
+	{
+		CFrame Bone;
+		Bone.bName = aData[i * 4].name;
+		FData.resize(i + 1, Bone);
+	}
+}
+
+void AnimationController::SetUpCFrameVec(const vector<CFrame>& base, vector<CFrame>& FData)
+{
+	for (int i = 0; i < base.size(); ++i)
+	{
+		CFrame Bone;
+		Bone.bName = base[i].bName;
+		FData.resize(i + 1, Bone);
+	}
+}
+
+void AnimationController::Interpolate(Track* cT, const double& t)
+{
+	cT->Timer += t;
+	XMFLOAT4 trans, rot;
+	for (int i = 0; i < cT->AData.size(); i += 4)
+	{
+		if (cT->Timer <= cT->Keys.front())
+		{
+			if (cT->AData[i].name == "root")
+			{
+
+				trans = XMFLOAT4(*(cT->AData[i].val.begin()) + initP.x,
+					*(cT->AData[i].val.begin() + 1) + initP.y,
+					*(cT->AData[i].val.begin() + 2) + initP.z, 0);
+				cT->FData[i / 4].pos = trans;
+			}
+			else
+			{
+				trans = XMFLOAT4(*(cT->AData[i].val.begin()),
+					*(cT->AData[i].val.begin() + 1),
+					*(cT->AData[i].val.begin() + 2), 0);
+				cT->FData[i / 4].pos = trans;
+			}
+
+			rot = XMFLOAT4(cT->AData[i + 1].val.front(),
+				cT->AData[i + 2].val.front(),
+				cT->AData[i + 3].val.front(), 0);
+			cT->FData[i / 4].rot = rot;
+		}
+		else if (cT->Timer >= cT->Keys.back())
+		{
+			if (cT->AData[i].name == "root")
+			{
+				trans = XMFLOAT4(*(cT->AData[i].val.end() - 3) + initP.x,
+					*(cT->AData[i].val.end() - 2) + initP.y,
+					*(cT->AData[i].val.end() - 1) + initP.z, 0);
+				cT->FData[i / 4].pos = trans;
+			}
+			else
+			{
+				trans = XMFLOAT4(*(cT->AData[i].val.end() - 3),
+					*(cT->AData[i].val.end() - 2),
+					*(cT->AData[i].val.end() - 1), 0);
+				cT->FData[i / 4].pos = trans;
+			}
+
+			rot = XMFLOAT4(cT->AData[i + 1].val.back(),
+				cT->AData[i + 2].val.back(),
+				cT->AData[i + 3].val.back(), 0);
+			cT->FData[i / 4].rot = rot;
+
+			if (cT->shouldLoop)cT->Timer = 0;
+		}
+		else
+		{
+			for (int j = 0; j < cT->Keys.size() - 1; ++j)
+			{
+				if (cT->Timer >= cT->Keys[j] && cT->Timer <= cT->Keys[j + 1])
+				{
+					float lerpPercent = (cT->Timer - cT->Keys[j]) / (cT->Keys[j + 1] - cT->Keys[j]);
+
+					XMVECTOR t1, t2, r1, r2, ft, fr;
+
+					strideNum = cT->AData[i].val.size() / cT->AData[i].stride;
+
+					if (strideNum > 1)
+					{
+						int f = (j * cT->AData[i].stride);
+						int s = ((j + 1) * cT->AData[i].stride);
+
+						if (cT->AData[i].name == "root")
+						{
+							trans = XMFLOAT4(cT->AData[i].val[f] + initP.x,
+								cT->AData[i].val[f + 1] + initP.y,
+								cT->AData[i].val[f + 2] + initP.z, 0);
+						}
+						else
+						{
+							trans = XMFLOAT4(cT->AData[i].val[f],
+								cT->AData[i].val[f + 1],
+								cT->AData[i].val[f + 2], 0);
+						}
+						t1 = XMLoadFloat4(&trans);
+
+						if (cT->AData[i].transName == "root")
+						{
+							trans = XMFLOAT4(cT->AData[i].val[s] + initP.x,
+								cT->AData[i].val[s + 1] + initP.y,
+								cT->AData[i].val[s + 2] + initP.z, 0);
+						}
+						else
+						{
+							trans = XMFLOAT4(cT->AData[i].val[s],
+								cT->AData[i].val[s + 1],
+								cT->AData[i].val[s + 2], 0);
+						}
+						t2 = XMLoadFloat4(&trans);
+
+						ft = SmoothStep(t1, t2, lerpPercent);
+						XMVector4Normalize(ft);
+						XMStoreFloat4(&trans, ft);
+
+						cT->FData[i / 4].pos = trans;
+					}
+
+					rot = XMFLOAT4(cT->AData[i + 1].val[j],
+						cT->AData[i + 2].val[j],
+						cT->AData[i + 3].val[j], 0);
+					r1 = XMLoadFloat4(&rot);
+
+					rot = XMFLOAT4(cT->AData[i + 1].val[j + 1],
+						cT->AData[i + 2].val[j + 1],
+						cT->AData[i + 3].val[j + 1], 0);
+					r2 = XMLoadFloat4(&rot);
+
+					fr = SmoothStep(r1, r2, lerpPercent);
+					XMStoreFloat4(&rot, fr);
+					cT->FData[i / 4].rot = rot;
+
+					break;
+				}
+			}
+		}
+	}
+}
+
+void AnimationController::InterpolateTracks(vector<Track*> aTracks, const double& time)
+{
+	timer += time;
+
+	XMFLOAT4 trans, rot;
+
+	for (int i = 0; i < currFrame.size(); ++i)
+	{
+		float blendFactor = timer / 1.0;
+
+		if (blendFactor <= 1.0f)
+		{
+			XMVECTOR t1, t2, r1, r2, ft, fr;
+			t1 = XMLoadFloat4(&aTracks[curr]->FData[i].pos);
+			t2 = XMLoadFloat4(&aTracks[next]->FData[i].pos);
+
+			ft = SmoothStep(t1, t2, blendFactor);
+			XMVector4Normalize(ft);
+
+			XMStoreFloat4(&trans, ft);
+
+			currFrame[i].pos = trans;
+
+
+			r1 = XMLoadFloat4(&aTracks[curr]->FData[i].rot);
+			r2 = XMLoadFloat4(&aTracks[next]->FData[i].rot);
+
+			fr = SmoothStep(r1, r2, blendFactor);
+			XMVector4Normalize(fr);
+
+			XMStoreFloat4(&rot, fr);
+
+			currFrame[i].rot = rot;
+		}
+		else
+		{
+			aTracks[curr]->active = false;
+			curr = aTracks[next]->trackId;
+			timer = 0;
+		}
+	}
+}
+
+void AnimationController::StoreCurrentFrame(vector<CFrame> curr)
+{
+	for (int i = 0; i < currFrame.size(); ++i)
+	{
+		currFrame[i].pos = curr[i].pos;
+		currFrame[i].rot = curr[i].rot;
+	}
+}
+
+void AnimationController::UpdateHiearachy(map<string, MeshComponent*>& bHierarchy)
+{
+	for (int i = 0; i < currFrame.size(); ++i)
+	{
+		string bone = currFrame[i].bName;
+		MeshComponent* CurrBone = bHierarchy.find(bone)->second;
+		CurrBone->GetLocPos() = currFrame[i].pos;
+		CurrBone->GetLocRot() = currFrame[i].rot;
+	}
+}
+
+
