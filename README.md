@@ -12,9 +12,9 @@ The project itself demonstrates the following 3D rendering techniques:
 - Rudimentary collision checks to allow the plane to shoot the robot.
 
 On the update of the project to a DirectX12 project, I intend to add the following:
-- Shader implementation to colour the scene.
-- Shadow modelling.
-- Real time collision checks.
+- [ ] Shader implementation to colour the scene.
+- [ ] Shadow modelling.
+- [ ] Real time collision checks.
 ## Project Controls
 
 For all Camera states:
