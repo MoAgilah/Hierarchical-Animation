@@ -117,3 +117,11 @@ You can extract or reuse the animation logic (in `Hierarchy/`) independently of 
 - **`Shared/`** scaffolding and demo runtime are courtesy of the course lecturer, provided to all students.
 - The hierarchical animation logic was independently developed in the `Hierarchy/` folder.
 - Course materials, DirectX documentation, and reference resources guided the implementation.
+
+## 👤 Author
+**Mohamed Agilah**  
+🎓 Games Programmer & AI Developer  
+🌐 [Portfolio Website](https://moagilah.com/)  
+📧 Contact: agilahmohamed@gmail.com  
+
+> *Project archived for educational and portfolio purposes (October 2025).*
