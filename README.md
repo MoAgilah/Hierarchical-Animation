@@ -1,57 +1,119 @@
-# Hiearchal Animation
-## Project Description
-![map](https://github.com/user-attachments/assets/9a016f92-9b14-4e58-a5a7-be115fba2fd3)
+# Hierarchical Animation
 
+A C++ project implementing hierarchical (skeletal) animation, model component assembly, and basic interaction in a DirectX environment.  
+Originally built with **DirectX 11** (legacy SDK); later iterations aim to shift toward **DirectX 12 / modern Windows SDK**.
 
-The project was originally built utilising Directx11  utlising the legacy [DirectX SDK](https://www.microsoft.com/en-gb/download/details.aspx?id=6812) it is has now suggested to utilise the modern Windows SDK instead. Instead of implementing the newer SDK for DirectX11 I have decided to learn DirectX12 to update this project. There are more details contained within the respository archiving my learning of this updated SDK [found here](https://github.com/MoAgilah/Introduction-to-Game-Programming-with-DirectX12).\
-The project itself demonstrates the following 3D rendering techniques:
-- Height map rendering
-- An model animation made up of multiple smaller components.
-- Relative velocity application for firing a bullet.
-- Skeletal animation of Robot model.
-- Rudimentary collision checks to allow the plane to shoot the robot.
+---
 
-On the update of the project to a DirectX12 project, I intend to add the following:
-- [ ] Shader implementation to colour the scene.
-- [ ] Shadow modelling.
-- [ ] Real time collision checks.
-## Project Controls
+## 🎥 Preview
 
-For all Camera states:
-| Key    | Response |
-| -------- | ------- |
-| w  | toggle wireframe    |
-| c | change camera state     |
+![Preview](Assets/preview.gif)
 
-The following camera states are available:
-- Map
-- Plane
-- Gun
-- Robot
+*(Visualization of skeletal model animations, hierarchical object composition, and interaction)*
 
-Whilst in CameraState::Map:
-| Key    | Response |
-| -------- | ------- |
-| q  | zoom camera in    |
-| a | zoom camera out     |
+---
 
-Whilst in CameraState::Plane || CameraState::Gun:
-| Key    | Response |
-| -------- | ------- |
-| q  | pitch upwards    |
-| a | pitch downwards     |
-| p  | yaw and roll left    |
-| o | yaw and roll right     |
-| l  | loop de loop    |
-| r | barrell roll right     |
-| space bar | fire gun     |
+## 📁 Project Structure
 
-Whilst in CameraState::Robot:
-| Key    | Response |
-| -------- | ------- |
-| 1  | change to the idle animation    |
-| 2 | change to the attack animation     |
-| 3  | change to the dieing animation    |
-| f | held down to iterate animation frame by frame     |
+```
+Hierarchy/     → Animation, skeletal logic, hierarchical model code
+Shared/        → Provided runtime framework (rendering, window, camera, input)
+*.sln          → Visual Studio solution and props files
+```
 
+> The **`Shared/`** directory was provided by the course lecturer to all students.  
+> It acts as scaffolding to support rendering, input, and demo execution. No internal modifications are expected.
 
+---
+
+## ⚙️ Features & Techniques
+
+- Hierarchical / skeletal animation (parent–child transforms)
+- Component-based modeling (e.g. limbs, joints, robot parts)
+- Animation states: idle, attack, death, etc.
+- Animation blending and state switching
+- Relative transformations (rotation, scaling)
+- Basic interaction logic (e.g. weapon firing, movement)
+- Height‑map rendering (scene terrain)
+- Multiple camera modes (map, plane, gun, robot)
+
+---
+
+## 🎮 Controls & Camera Modes
+
+### Common
+| Key | Action |
+|-----|--------|
+| W | Toggle wireframe mode |
+| C | Change camera state |
+
+### Camera States
+
+#### Map
+| Key | Action |
+|-----|--------|
+| Q | Zoom in |
+| A | Zoom out |
+
+#### Plane / Gun
+| Key | Action |
+|-----|--------|
+| Q | Pitch up |
+| A | Pitch down |
+| O / P | Yaw / roll changes |
+| L | Loop de loop |
+| R | Barrel roll |
+| Space | Fire weapon |
+
+#### Robot
+| Key | Action |
+|-----|--------|
+| 1 | Idle animation |
+| 2 | Attack animation |
+| 3 | Death animation |
+| F (hold) | Advance animation frame by frame |
+
+---
+
+## 🧱 Building & Running
+
+**Requirements**
+- Visual Studio 2019 or 2022  
+- Windows 10/11 SDK  
+- DirectX 11 support (or equivalent)
+
+**Steps**
+1. Open the solution file `.sln`.  
+2. Set build configuration to **x64** and either **Debug** or **Release**.  
+3. Build and run (press **F5** in Visual Studio).
+
+---
+
+## 🔄 Integration & Reuse
+
+You can extract or reuse the animation logic (in `Hierarchy/`) independently of the demo framework.
+
+- Include headers and source for skeletal / hierarchical systems.
+- Adapt to your own math / engine types.
+- Drive animation updates and blending from your engine or update loop.
+- Use the demo scaffolding (from `Shared/`) if you want quick visual verification.
+
+---
+
+## 🔭 Future / Enhancement Ideas
+
+- GPU skinning (vertex shader bone blending)
+- Animation blending / interpolation (smooth transitions)
+- Inverse kinematics (IK)
+- Morph target / blend shape support
+- Improved interaction and collision detection
+- Port to DirectX 12 and modern rendering pipeline
+- Shadows, lighting, and more advanced shading
+
+---
+
+## 🙏 Acknowledgements
+
+- **`Shared/`** scaffolding and demo runtime are courtesy of the course lecturer, provided to all students.
+- The hierarchical animation logic was independently developed in the `Hierarchy/` folder.
+- Course materials, DirectX documentation, and reference resources guided the implementation.
