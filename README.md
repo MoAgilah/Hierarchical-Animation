@@ -12,6 +12,16 @@ Originally built with **DirectX 11** (legacy SDK); later iterations aim to shift
 *(Visualization of skeletal model animations, hierarchical object composition, and interaction)*
 
 ---
+## ▶️ How to Run
+
+1. **Extract** the `.zip` file to any folder.  
+2. Open the extracted folder.  
+3. Run the executable:
+   - **Windows:** `HierarchyAnimation.exe`  
+
+> 💡 If you see a Windows SmartScreen prompt, click **More info → Run anyway** (the app is safe but not code-signed).
+
+---
 
 ## 📁 Project Structure
 
