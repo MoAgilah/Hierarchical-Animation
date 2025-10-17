@@ -19,6 +19,7 @@
     <SccAuxPath>Svn</SccAuxPath>
     <SccLocalPath>Svn</SccLocalPath>
     <SccProvider>SubversionScc</SccProvider>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -51,6 +52,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)bin\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -120,6 +122,41 @@
     <ClInclude Include="MeshComponent.h" />
     <ClInclude Include="Robot.h" />
     <ClInclude Include="tinyxml2.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\bin\HierarchyAnimation.zip" />
+    <None Include="Resources\heightmap.psd" />
+    <None Include="Resources\Plane\bullet.x" />
+    <None Include="Resources\Plane\gun.x" />
+    <None Include="Resources\Plane\plane.x" />
+    <None Include="Resources\Plane\prop.x" />
+    <None Include="Resources\Plane\turret.x" />
+    <None Include="Resources\Robot\body.x" />
+    <None Include="Resources\Robot\left_ankle.x" />
+    <None Include="Resources\Robot\left_elbow.x" />
+    <None Include="Resources\Robot\left_hip.x" />
+    <None Include="Resources\Robot\left_knee.x" />
+    <None Include="Resources\Robot\left_shoulder.x" />
+    <None Include="Resources\Robot\left_wrist.x" />
+    <None Include="Resources\Robot\neck.x" />
+    <None Include="Resources\Robot\pelvis.x" />
+    <None Include="Resources\Robot\right_ankle.x" />
+    <None Include="Resources\Robot\right_elbow.x" />
+    <None Include="Resources\Robot\right_hip.x" />
+    <None Include="Resources\Robot\right_knee.x" />
+    <None Include="Resources\Robot\right_shoulder.x" />
+    <None Include="Resources\Robot\right_wrist.x" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\Plane\pHierarchy.txt" />
+    <Text Include="Resources\Robot\rHierarchy.txt" />
+    <Text Include="Resources\Robot\RobotAttackAnimDAE.txt" />
+    <Text Include="Resources\Robot\RobotDieAnimDAE.txt" />
+    <Text Include="Resources\Robot\RobotIdleAnimDAE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\heightmap.bmp" />
+    <Image Include="Resources\test.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

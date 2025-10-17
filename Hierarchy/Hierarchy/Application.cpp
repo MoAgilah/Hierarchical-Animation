@@ -28,16 +28,11 @@ bool Application::HandleStart()
 	aniP = new AnimationParser();
 
 	m_pHeightMap = new HeightMap( "Resources/heightmap.bmp", 2.0f );
-	
+
 	m_pAeroplane = new Aeroplane(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 105.0f, 0.0f));
 
 	m_pRobot = new Robot(XMFLOAT3(0.0f, 2.43552780f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), 10.0f);
-	
-	//m_pAeroplane->CreateHierarchie();
 
-	//m_pRobot->CreateHierarchie();
-	//m_pRobot->LoadAnimations();
-	
 	m_cameraZ = 50.0f;
 	m_rotationAngle = 0.0f;
 
@@ -47,7 +42,7 @@ bool Application::HandleStart()
 	this->SetRasterizerState( false, m_bWireframe );
 
 	m_cameraState = CAMERA_MAP;
-		
+
 	return true;
 }
 
@@ -75,15 +70,15 @@ void Application::HandleUpdate(const double& dt)
 	{
 		if (this->IsKeyPressed('Q'))
 			m_cameraZ -= 2.0f;
-		
+
 		if (this->IsKeyPressed('A'))
 			m_cameraZ += 2.0f;
 	}
 
-	
+
 	static bool dbC = false;
 
-	if (this->IsKeyPressed('C') )	
+	if (this->IsKeyPressed('C') )
 	{
 		if( !dbC )
 		{
@@ -100,7 +95,7 @@ void Application::HandleUpdate(const double& dt)
 
 
 	static bool dbW = false;
-	if (this->IsKeyPressed('W') )	
+	if (this->IsKeyPressed('W') )
 	{
 		if( !dbW )
 		{
@@ -114,7 +109,7 @@ void Application::HandleUpdate(const double& dt)
 		dbW = false;
 	}
 
-	
+
 	m_pAeroplane->Update(m_cameraState > CAMERA_MAP && m_cameraState < CAMERA_ROBOT, dt);
 	m_pRobot->BeAggressive(m_pAeroplane->GetRoot());
 	m_pRobot->Update(m_cameraState == CAMERA_ROBOT || m_cameraState == CAMERA_MAP, dt);

@@ -87,5 +87,113 @@
     <Filter Include="Animation\TinyXML">
       <UniqueIdentifier>{657a8704-812d-42a0-a523-94506f2a02bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{c2885a54-98a2-4724-82c8-172530c84717}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Plane">
+      <UniqueIdentifier>{18e91d54-62c7-4757-b0d0-69d285146051}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Robot">
+      <UniqueIdentifier>{d65312a4-21b6-4454-9205-ae29f5e3a611}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\HeightMap">
+      <UniqueIdentifier>{ed3be858-fc5c-42f6-aacb-da9ee0007245}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources\Bin">
+      <UniqueIdentifier>{eb4504d4-d01a-47d7-b429-be9420d757cc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Plane\turret.x">
+      <Filter>Resources\Plane</Filter>
+    </None>
+    <None Include="Resources\Plane\bullet.x">
+      <Filter>Resources\Plane</Filter>
+    </None>
+    <None Include="Resources\Plane\gun.x">
+      <Filter>Resources\Plane</Filter>
+    </None>
+    <None Include="Resources\Plane\plane.x">
+      <Filter>Resources\Plane</Filter>
+    </None>
+    <None Include="Resources\Plane\prop.x">
+      <Filter>Resources\Plane</Filter>
+    </None>
+    <None Include="Resources\Robot\body.x">
+      <Filter>Resources\Robot</Filter>
+    </None>
+    <None Include="Resources\Robot\left_ankle.x">
+      <Filter>Resources\Robot</Filter>
+    </None>
+    <None Include="Resources\Robot\left_elbow.x">
+      <Filter>Resources\Robot</Filter>
+    </None>
+    <None Include="Resources\Robot\left_hip.x">
+      <Filter>Resources\Robot</Filter>
+    </None>
+    <None Include="Resources\Robot\left_knee.x">
+      <Filter>Resources\Robot</Filter>
+    </None>
+    <None Include="Resources\Robot\left_shoulder.x">
+      <Filter>Resources\Robot</Filter>
+    </None>
+    <None Include="Resources\Robot\left_wrist.x">
+      <Filter>Resources\Robot</Filter>
+    </None>
+    <None Include="Resources\Robot\neck.x">
+      <Filter>Resources\Robot</Filter>
+    </None>
+    <None Include="Resources\Robot\pelvis.x">
+      <Filter>Resources\Robot</Filter>
+    </None>
+    <None Include="Resources\Robot\right_ankle.x">
+      <Filter>Resources\Robot</Filter>
+    </None>
+    <None Include="Resources\Robot\right_elbow.x">
+      <Filter>Resources\Robot</Filter>
+    </None>
+    <None Include="Resources\Robot\right_hip.x">
+      <Filter>Resources\Robot</Filter>
+    </None>
+    <None Include="Resources\Robot\right_knee.x">
+      <Filter>Resources\Robot</Filter>
+    </None>
+    <None Include="Resources\Robot\right_shoulder.x">
+      <Filter>Resources\Robot</Filter>
+    </None>
+    <None Include="Resources\Robot\right_wrist.x">
+      <Filter>Resources\Robot</Filter>
+    </None>
+    <None Include="Resources\heightmap.psd">
+      <Filter>Resources\HeightMap</Filter>
+    </None>
+    <None Include="..\..\bin\HierarchyAnimation.zip">
+      <Filter>Resources\Bin</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\Plane\pHierarchy.txt">
+      <Filter>Resources\Plane</Filter>
+    </Text>
+    <Text Include="Resources\Robot\rHierarchy.txt">
+      <Filter>Resources\Robot</Filter>
+    </Text>
+    <Text Include="Resources\Robot\RobotAttackAnimDAE.txt">
+      <Filter>Resources\Robot</Filter>
+    </Text>
+    <Text Include="Resources\Robot\RobotDieAnimDAE.txt">
+      <Filter>Resources\Robot</Filter>
+    </Text>
+    <Text Include="Resources\Robot\RobotIdleAnimDAE.txt">
+      <Filter>Resources\Robot</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\heightmap.bmp">
+      <Filter>Resources\HeightMap</Filter>
+    </Image>
+    <Image Include="Resources\test.bmp">
+      <Filter>Resources\HeightMap</Filter>
+    </Image>
   </ItemGroup>
 </Project>
