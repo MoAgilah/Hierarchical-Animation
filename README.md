@@ -12,7 +12,10 @@ Originally built with **DirectX 11** (legacy SDK); later iterations aim to shift
 *(Visualization of skeletal model animations, hierarchical object composition, and interaction)*
 
 ---
-## ▶️ How to Run
+## 📦 Download & Run
+You can download the latest standalone executable here:
+
+👉 [Download Standalone Executable](https://raw.githubusercontent.com/MoAgilah/Hierarchical-Animation/blob/master/bin/HierarchyAnimation.zip)
 
 1. **Extract** the `.zip` file to any folder.  
 2. Open the extracted folder.  
