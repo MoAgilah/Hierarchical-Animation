@@ -7,7 +7,7 @@ Originally built with **DirectX 11** (legacy SDK); later iterations aim to shift
 
 ## 🎥 Preview
 
-![Preview](https://github.com/MoAgilah/Hierarchical-Animation/blob/master/Preview/Gif/Animation.gif)
+![Preview](https://github.com/MoAgilah/Hierarchical-Animation/raw/master/Preview/Gif/Animation.gif)
 
 *(Visualization of skeletal model animations, hierarchical object composition, and interaction)*
 
