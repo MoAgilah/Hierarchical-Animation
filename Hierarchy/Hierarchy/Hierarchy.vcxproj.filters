@@ -102,6 +102,9 @@
     <Filter Include="Resources\Bin">
       <UniqueIdentifier>{eb4504d4-d01a-47d7-b429-be9420d757cc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources\Gifs">
+      <UniqueIdentifier>{e6f10046-7e87-4750-8588-6876a86498d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Plane\turret.x">
@@ -194,6 +197,9 @@
     </Image>
     <Image Include="Resources\test.bmp">
       <Filter>Resources\HeightMap</Filter>
+    </Image>
+    <Image Include="..\..\Preview\Gif\Animation.gif">
+      <Filter>Resources\Gifs</Filter>
     </Image>
   </ItemGroup>
 </Project>
