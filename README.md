@@ -8,8 +8,9 @@ Originally built with **DirectX 11** (legacy SDK); later iterations aim to shift
 ## 🎥 Preview
 
 | **Plane** | **Robot** |
-|---|---|
-| ![Plane]([https://github.com/MoAgilah/Hierarchical-Animation/blob/master/Preview/Gif/Plane.gif]) | ![Robot](https://github.com/MoAgilah/Hierarchical-Animation/blob/master/Preview/Gif/Robot.gif) |
+|------------|------------|
+| ![Plane](https://github.com/MoAgilah/Hierarchical-Animation/blob/master/Preview/Gif/Plane.gif?raw=true) | ![Robot](https://github.com/MoAgilah/Hierarchical-Animation/blob/master/Preview/Gif/Robot.gif?raw=true) |
+
 
 *(Visualization of skeletal model animations, hierarchical object composition, and interaction)*
 
