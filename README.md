@@ -1,10 +1,11 @@
 # Hierarchical Animation
 
-A C++ project implementing hierarchical (skeletal) animation, model component assembly, and basic interaction in a DirectX environment.  
-Originally built with **DirectX 11** (legacy SDK); later iterations aim to shift toward **DirectX 12 / modern Windows SDK**.
+This project demonstrates two different animation systems commonly used in games — **hierarchical (rigid-body)** animation and **skeletal (joint-based)** animation — implemented from scratch in C++.  
 
+It includes:
+- A **plane** model built with hierarchical rigid parts and functional propeller/gun animations.
+- A **robot** model using a joint-based skeleton (unskinned) with animation blending between different motion clips.
 ---
-
 ## 🎥 Preview
 
 | **Plane** | **Robot** |
@@ -13,6 +14,95 @@ Originally built with **DirectX 11** (legacy SDK); later iterations aim to shift
 
 
 *(Visualization of skeletal model animations, hierarchical object composition, and interaction)*
+
+---
+
+## 🎮 Overview
+
+The goal of this project is to explore how transform hierarchies and skeletal rigs can be used to animate objects and characters procedurally or via keyframed data.
+
+**Key Features**
+- Hierarchical transformation system (local/world matrices)
+- Animation controllers and blending
+- Forward kinematics (FK)
+- Procedural rotation (e.g., spinning propeller)
+- Socket-based firing from moving parts
+- Scene-graph propagation of transforms
+
+---
+
+## ✈️ Plane — Hierarchical Rigid Animation & Firing System
+
+The plane demonstrates **hierarchical animation**, where each component of the model is a rigid part connected through a **parent–child transform tree**.
+
+### Features
+- **Modular construction:** fuselage (root), propeller, turret, and gun barrel linked hierarchically.
+- **Procedural animation:** propeller spins continuously; turret and gun rotate relative to the fuselage.
+- **Barrel-accurate firing:** bullets spawn from the **gun barrel’s world transform**, ensuring projectiles always fire directly from the barrel tip regardless of rotation or movement.
+- **Scene-graph update:** transforms are propagated down the hierarchy each frame.
+
+### Technical Notes
+- Clean separation between **local** and **world** transformations.
+- Use of **mount points/sockets** for gameplay elements (bullets, VFX, sound).
+- Deterministic update order: evaluate → propagate → spawn → render.
+
+### Learned Concepts
+- TRS (Translate, Rotate, Scale) matrix composition.
+- Parenting and world-space transform propagation.
+- Attaching gameplay logic to animated components.
+
+---
+
+## 🤖 Robot — Skeletal (Unskinned) Animation & Blending
+
+The robot showcases a **skeletal animation system** without mesh skinning — each rigid body part follows its corresponding bone directly.  
+
+This allows complex, multi-joint movement while keeping the model lightweight and modular.
+
+### Features
+- **Joint hierarchy:** bones drive rigid mesh parts through a forward-kinematic chain.
+- **Clip player:** keyframed animations (e.g., idle, walk, gestures) with a lightweight player supporting looping and playback speed.
+- **Animation blending:** smooth transitions between clips (e.g., idle ↔ walk), and support for partial-body overlays (upper-body gestures layered over locomotion).
+- **Quaternion blending:** prevents rotational artifacts and maintains stable motion.
+
+### Technical Notes
+- Forward Kinematics (FK) evaluated per-frame across the bone graph.
+- Animation layers and blend masks allow partial control of certain joints.
+- Quaternion normalization and consistent TRS update order.
+- Debug visualization for bone axes and named sockets.
+
+### Learned Concepts
+- Implementation of skeletal systems without vertex skinning.
+- Pose interpolation and per-joint blending.
+- Data separation between animation, rendering, and gameplay.
+
+---
+
+## 🧩 Technical Highlights
+
+- **Socket-based gameplay:** Bullets, particles, and VFX read socket transforms directly from the animation system.
+- **Scene graph abstraction:** Animation, rendering, and gameplay remain loosely coupled.
+- **Stable transformations:** Consistent use of quaternions, normalized rotations, and proper FK propagation.
+- **Debug tools:** On-screen bone/skeleton visualization for troubleshooting motion artifacts.
+
+---
+
+## ⚙️ Challenges & Solutions
+
+| Challenge | Solution |
+|------------|-----------|
+| Preventing gimbal lock | Used quaternions for all rotation blending |
+| Animation popping | Implemented short (0.2–0.3s) cross-fades between clips |
+| Hierarchical drift | Added per-frame debug visualization of world matrices |
+| Propeller rotation vs. turret rotation conflicts | Separated animation controllers and propagated transforms deterministically |
+
+---
+
+## 🧠 Key Takeaways
+
+- A **hierarchical system** provides precision for rigid body components like vehicles or turrets.  
+- A **skeletal system (unskinned)** supports character-like articulation without complex deformation math.  
+- Both systems integrate cleanly with gameplay through **transform sockets** and **scene graphs**.
 
 ---
 ## 📦 Download & Run
