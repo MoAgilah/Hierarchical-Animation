@@ -155,7 +155,8 @@
     <Text Include="Resources\Robot\RobotIdleAnimDAE.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\Preview\Gif\Animation.gif" />
+    <Image Include="..\..\Preview\Gif\Plane.gif" />
+    <Image Include="..\..\Preview\Gif\Robot.gif" />
     <Image Include="Resources\heightmap.bmp" />
     <Image Include="Resources\test.bmp" />
   </ItemGroup>
