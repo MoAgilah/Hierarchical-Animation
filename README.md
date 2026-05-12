@@ -120,12 +120,5 @@ A standalone executable is also available in the repository release/download sec
 - The `Shared/` runtime framework was provided as university course scaffolding.
 - Hierarchical and skeletal animation systems were independently implemented by the author.
 - DirectX documentation and course materials were referenced during development.
-
----
-
-## 👤 Author
-
-**Mohamed Agilah**  
-🎓 Games Programmer & AI Developer  
-🌐 https://moagilah.com/  
-📧 agilahmohamed@gmail.com
+  
+ ---
