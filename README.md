@@ -1,233 +1,131 @@
 # Hierarchical Animation
 
-This project demonstrates two different animation systems commonly used in games — **hierarchical (rigid-body)** animation and **skeletal (joint-based)** animation — implemented from scratch in C++.  
+A modular **C++ DirectX 11 animation system** demonstrating both hierarchical rigid-body animation and skeletal joint-based animation. The project explores transform hierarchies, scene graph propagation, forward kinematics, animation state systems, and lightweight animation blending in real time.
 
-It includes:
-- A **plane** model built with hierarchical rigid parts and functional propeller/gun animations.
-- A **robot** model using a joint-based skeleton (unskinned) with animation blending between different motion clips.
+The project contains two main demonstrations:
+- A **plane** built from animated rigid components using hierarchical transforms.
+- A **robot** driven by a joint-based skeletal hierarchy with animation state switching and blending.
+
 ---
+
 ## 🎥 Preview
 
-| **Plane** | **Robot** |
-|------------|------------|
+| Plane | Robot |
+|-------|--------|
 | ![Plane](https://github.com/MoAgilah/Hierarchical-Animation/blob/master/Preview/Gif/Plane.gif?raw=true) | ![Robot](https://github.com/MoAgilah/Hierarchical-Animation/blob/master/Preview/Gif/Robot.gif?raw=true) |
 
+---
 
-*(Visualization of skeletal model animations, hierarchical object composition, and interaction)*
+## ⚙️ Key Features
+
+- Hierarchical transformation system using local and world matrices
+- Parent–child animation for rigid-body objects
+- Unskinned skeletal animation using joint-driven rigid parts
+- Forward kinematics across the bone hierarchy
+- Animation state switching and lightweight blending
+- Procedural component animation (e.g. propeller rotation)
+- Socket-based firing from animated gun barrels
+- Scene graph propagation and deterministic transform updates
+- Multiple camera modes for scene inspection
+- Separation between animation systems and runtime scaffolding
 
 ---
 
-## 🎮 Overview
+## ✈️ Plane — Hierarchical Animation
 
-The goal of this project is to explore how transform hierarchies and skeletal rigs can be used to animate objects and characters procedurally or via keyframed data.
+The plane demonstrates hierarchical rigid-body animation through modular parent–child relationships between components such as the fuselage, propeller, turret, and gun barrel.
 
-**Key Features**
-- Hierarchical transformation system (local/world matrices)
-- Animation controllers and blending
-- Forward kinematics (FK)
-- Procedural rotation (e.g., spinning propeller)
-- Socket-based firing from moving parts
-- Scene-graph propagation of transforms
+### Highlights
 
----
-
-## ✈️ Plane — Hierarchical Rigid Animation & Firing System
-
-The plane demonstrates **hierarchical animation**, where each component of the model is a rigid part connected through a **parent–child transform tree**.
-
-### Features
-- **Modular construction:** fuselage (root), propeller, turret, and gun barrel linked hierarchically.
-- **Procedural animation:** propeller spins continuously; turret and gun rotate relative to the fuselage.
-- **Barrel-accurate firing:** bullets spawn from the **gun barrel’s world transform**, ensuring projectiles always fire directly from the barrel tip regardless of rotation or movement.
-- **Scene-graph update:** transforms are propagated down the hierarchy each frame.
-
-### Technical Notes
-- Clean separation between **local** and **world** transformations.
-- Use of **mount points/sockets** for gameplay elements (bullets, VFX, sound).
-- Deterministic update order: evaluate → propagate → spawn → render.
-
-### Learned Concepts
-- TRS (Translate, Rotate, Scale) matrix composition.
-- Parenting and world-space transform propagation.
-- Attaching gameplay logic to animated components.
+- Continuous procedural propeller animation
+- Turret and gun rotation relative to the plane body
+- Projectile spawning from the animated gun barrel socket
+- Deterministic transform propagation and gameplay updates
 
 ---
 
-## 🤖 Robot — Skeletal (Unskinned) Animation & Blending
+## 🤖 Robot — Skeletal Animation
 
-The robot showcases a **skeletal animation system** without mesh skinning — each rigid body part follows its corresponding bone directly.  
+The robot demonstrates an unskinned skeletal animation system where rigid body parts follow a joint hierarchy using forward kinematics.
 
-This allows complex, multi-joint movement while keeping the model lightweight and modular.
+### Highlights
 
-### Features
-- **Joint hierarchy:** bones drive rigid mesh parts through a forward-kinematic chain.
-- **Clip player:** keyframed animations (e.g., idle, walk, gestures) with a lightweight player supporting looping and playback speed.
-- **Animation blending:** smooth transitions between clips (e.g., idle ↔ walk), and support for partial-body overlays (upper-body gestures layered over locomotion).
-- **Quaternion blending:** prevents rotational artifacts and maintains stable motion.
-
-### Technical Notes
-- Forward Kinematics (FK) evaluated per-frame across the bone graph.
-- Animation layers and blend masks allow partial control of certain joints.
-- Quaternion normalization and consistent TRS update order.
-- Debug visualization for bone axes and named sockets.
-
-### Learned Concepts
-- Implementation of skeletal systems without vertex skinning.
-- Pose interpolation and per-joint blending.
-- Data separation between animation, rendering, and gameplay.
+- Joint-driven modular body parts
+- Idle, attack, and death animation states
+- Lightweight animation blending and pose interpolation
+- Frame-by-frame animation inspection
+- Separation between animation data, pose evaluation, and rendering
 
 ---
 
-## 🧩 Technical Highlights
+## 🧱 Architecture
 
-- **Socket-based gameplay:** Bullets, particles, and VFX read socket transforms directly from the animation system.
-- **Scene graph abstraction:** Animation, rendering, and gameplay remain loosely coupled.
-- **Stable transformations:** Consistent use of quaternions, normalized rotations, and proper FK propagation.
-- **Debug tools:** On-screen bone/skeleton visualization for troubleshooting motion artifacts.
+The project is structured around reusable animation systems rather than hard-coded rendering behaviour. Local transforms are evaluated first and then propagated through the hierarchy to produce final world transforms.
 
----
+Gameplay systems such as firing use sockets and component transforms so interactions remain attached to animated parts.
 
-## ⚙️ Challenges & Solutions
-
-| Challenge | Solution |
-|------------|-----------|
-| Preventing gimbal lock | Used quaternions for all rotation blending |
-| Animation popping | Implemented short (0.2–0.3s) cross-fades between clips |
-| Hierarchical drift | Added per-frame debug visualization of world matrices |
-| Propeller rotation vs. turret rotation conflicts | Separated animation controllers and propagated transforms deterministically |
-
----
-
-## 🧠 Key Takeaways
-
-- A **hierarchical system** provides precision for rigid body components like vehicles or turrets.  
-- A **skeletal system (unskinned)** supports character-like articulation without complex deformation math.  
-- Both systems integrate cleanly with gameplay through **transform sockets** and **scene graphs**.
-
----
-## 📦 Download & Run
-You can download the latest standalone executable here:
-
-👉 [Download Standalone Executable](https://github.com/MoAgilah/Hierarchical-Animation/raw/master/bin/HierarchyAnimation.zip)
-
-1. **Extract** the `.zip` file to any folder.  
-2. Open the extracted folder.  
-3. Run the executable:
-   - **Windows:** `HierarchyAnimation.exe`  
-
-> 💡 If you see a Windows SmartScreen prompt, click **More info → Run anyway** (the app is safe but not code-signed).
-
----
-
-## 📁 Project Structure
-
-```
+```text
 Hierarchy/     → Animation, skeletal logic, hierarchical model code
-Shared/        → Provided runtime framework (rendering, window, camera, input)
-*.sln          → Visual Studio solution and props files
+Shared/        → Provided runtime framework for rendering and input
+*.sln          → Visual Studio solution and project files
 ```
 
-> The **`Shared/`** directory was provided by the course lecturer to all students.  
-> It acts as scaffolding to support rendering, input, and demo execution. No internal modifications are expected.
+The `Shared/` framework was provided as university scaffolding for rendering, input, and visualisation. The animation systems inside `Hierarchy/` were independently implemented.
 
 ---
 
-## ⚙️ Features & Techniques
+## 🛠 Technologies
 
-- Hierarchical / skeletal animation (parent–child transforms)
-- Component-based modeling (e.g. limbs, joints, robot parts)
-- Animation states: idle, attack, death, etc.
-- Animation blending and state switching
-- Relative transformations (rotation, scaling)
-- Basic interaction logic (e.g. weapon firing, movement)
-- Height‑map rendering (scene terrain)
-- Multiple camera modes (map, plane, gun, robot)
+- C++
+- DirectX 11
+- Visual Studio
+- Windows SDK
+- Real-time animation systems
+- Forward kinematics
 
 ---
 
-## 🎮 Controls & Camera Modes
+## 🚀 Build & Run
 
-### Common
-| Key | Action |
-|-----|--------|
-| W | Toggle wireframe mode |
-| C | Change camera state |
+### Requirements
 
-### Camera States
+- Visual Studio 2019 or 2022
+- Windows 10/11 SDK
+- DirectX 11-compatible environment
 
-#### Map
-| Key | Action |
-|-----|--------|
-| Q | Zoom in |
-| A | Zoom out |
+### Steps
 
-#### Plane / Gun
-| Key | Action |
-|-----|--------|
-| Q | Pitch up |
-| A | Pitch down |
-| O / P | Yaw / roll changes |
-| L | Loop de loop |
-| R | Barrel roll |
-| Space | Fire weapon |
+1. Clone the repository.
+2. Open the Visual Studio solution file.
+3. Set the configuration to **x64 → Debug** or **Release**.
+4. Build and run the project.
 
-#### Robot
-| Key | Action |
-|-----|--------|
-| 1 | Idle animation |
-| 2 | Attack animation |
-| 3 | Death animation |
-| F (hold) | Advance animation frame by frame |
+A standalone executable is also available in the repository release/download section.
 
 ---
 
-## 🧱 Building & Running
+## 🔭 Future Work
 
-**Requirements**
-- Visual Studio 2019 or 2022  
-- Windows 10/11 SDK  
-- DirectX 11 support (or equivalent)
-
-**Steps**
-1. Open the solution file `.sln`.  
-2. Set build configuration to **x64** and either **Debug** or **Release**.  
-3. Build and run (press **F5** in Visual Studio).
-
----
-
-## 🔄 Integration & Reuse
-
-You can extract or reuse the animation logic (in `Hierarchy/`) independently of the demo framework.
-
-- Include headers and source for skeletal / hierarchical systems.
-- Adapt to your own math / engine types.
-- Drive animation updates and blending from your engine or update loop.
-- Use the demo scaffolding (from `Shared/`) if you want quick visual verification.
-
----
-
-## 🔭 Future / Enhancement Ideas
-
-- GPU skinning (vertex shader bone blending)
-- Animation blending / interpolation (smooth transitions)
-- Inverse kinematics (IK)
-- Morph target / blend shape support
-- Improved interaction and collision detection
-- Port to DirectX 12 and modern rendering pipeline
-- Shadows, lighting, and more advanced shading
+- GPU skinning with vertex shader bone blending
+- Inverse kinematics for procedural pose control
+- Improved animation blending and layered animation masks
+- Advanced debug visualisation tools
+- Integration with gameplay and collision systems
+- DirectX 12 rendering backend exploration
 
 ---
 
 ## 🙏 Acknowledgements
 
-- **`Shared/`** scaffolding and demo runtime are courtesy of the course lecturer, provided to all students.
-- The hierarchical animation logic was independently developed in the `Hierarchy/` folder.
-- Course materials, DirectX documentation, and reference resources guided the implementation.
+- The `Shared/` runtime framework was provided as university course scaffolding.
+- Hierarchical and skeletal animation systems were independently implemented by the author.
+- DirectX documentation and course materials were referenced during development.
+
+---
 
 ## 👤 Author
+
 **Mohamed Agilah**  
 🎓 Games Programmer & AI Developer  
-🌐 [Portfolio Website](https://moagilah.com/)  
-📧 Contact: agilahmohamed@gmail.com  
-
-> *Project archived for educational and portfolio purposes (October 2025).*
+🌐 https://moagilah.com/  
+📧 agilahmohamed@gmail.com
