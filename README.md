@@ -1,124 +1,109 @@
 # Hierarchical Animation
 
-A modular **C++ DirectX 11 animation system** demonstrating both hierarchical rigid-body animation and skeletal joint-based animation. The project explores transform hierarchies, scene graph propagation, forward kinematics, animation state systems, and lightweight animation blending in real time.
+A modern C++ graphics project exploring hierarchical transformations, keyframe animation and articulated model construction through a reusable parent–child scene hierarchy.
 
-The project contains two main demonstrations:
-- A **plane** built from animated rigid components using hierarchical transforms.
-- A **robot** driven by a joint-based skeletal hierarchy with animation state switching and blending.
+Hierarchical Animation investigates the mathematical and software engineering principles behind articulated animation by combining recursive transformation propagation, imported animation data and procedural component movement within a real-time DirectX application. Rather than focusing solely on rendering, the project explores how hierarchical structures, animation systems and scene management combine to produce complex animated behaviour.
 
----
-
-## 🎥 Preview
-
-| Plane | Robot |
-|-------|--------|
-| ![Plane](https://github.com/MoAgilah/Hierarchical-Animation/blob/master/Preview/Gif/Plane.gif?raw=true) | ![Robot](https://github.com/MoAgilah/Hierarchical-Animation/blob/master/Preview/Gif/Robot.gif?raw=true) |
+The project focuses on graphics programming, animation systems and modular software design, demonstrating how articulated models and keyframe animation can be organised into clear, maintainable components while applying concepts commonly found in game engines and real-time visualisation software.
 
 ---
 
-## ⚙️ Key Features
+## The Engineering Problem
 
-- Hierarchical transformation system using local and world matrices
-- Parent–child animation for rigid-body objects
-- Unskinned skeletal animation using joint-driven rigid parts
-- Forward kinematics across the bone hierarchy
-- Animation state switching and lightweight blending
-- Procedural component animation (e.g. propeller rotation)
-- Socket-based firing from animated gun barrels
-- Scene graph propagation and deterministic transform updates
-- Multiple camera modes for scene inspection
-- Separation between animation systems and runtime scaffolding
+Animating complex objects involves significantly more than moving individual meshes. Articulated models require parent–child relationships so that movement applied to one component is inherited naturally by those attached beneath it, while still allowing every component to maintain its own independent local transformations.
+
+Hierarchical Animation explores this challenge by implementing a reusable transformation hierarchy capable of supporting both procedurally animated mechanical objects and imported keyframe animation. The project investigates how recursive transformation propagation, animation interpolation and scene organisation can be combined within a maintainable C++ application while demonstrating the core principles underpinning modern animation systems.
 
 ---
 
-## ✈️ Plane — Hierarchical Animation
+## Simulation Architecture
 
-The plane demonstrates hierarchical rigid-body animation through modular parent–child relationships between components such as the fuselage, propeller, turret, and gun barrel.
+<p align="center">
+  <img width="700" alt="HierarchalAnimation" src="https://github.com/user-attachments/assets/8f84686c-cee2-47e4-9614-4382b76cac45" />
+</p>
 
-### Highlights
-
-- Continuous procedural propeller animation
-- Turret and gun rotation relative to the plane body
-- Projectile spawning from the animated gun barrel socket
-- Deterministic transform propagation and gameplay updates
+The application is organised into modular systems responsible for hierarchy construction, animation processing, scene management and rendering. Each subsystem performs a focused responsibility while contributing to the complete animation pipeline, allowing transformation management, animation evaluation and rendering to remain clearly separated.
 
 ---
 
-## 🤖 Robot — Skeletal Animation
+## Engineering Goals
 
-The robot demonstrates an unskinned skeletal animation system where rigid body parts follow a joint hierarchy using forward kinematics.
+The project was designed to explore:
 
-### Highlights
+- Hierarchical transformations
+- Parent–child scene graphs
+- Keyframe animation
+- Animation interpolation
+- Animation blending
+- Recursive matrix propagation
+- Data-driven animation loading
+- Real-time graphics programming
+- Modular software organisation
 
-- Joint-driven modular body parts
-- Idle, attack, and death animation states
-- Lightweight animation blending and pose interpolation
-- Frame-by-frame animation inspection
-- Separation between animation data, pose evaluation, and rendering
-
----
-
-## 🧱 Architecture
-
-The project is structured around reusable animation systems rather than hard-coded rendering behaviour. Local transforms are evaluated first and then propagated through the hierarchy to produce final world transforms.
-
-Gameplay systems such as firing use sockets and component transforms so interactions remain attached to animated parts.
-
-```text
-Hierarchy/     → Animation, skeletal logic, hierarchical model code
-Shared/        → Provided runtime framework for rendering and input
-*.sln          → Visual Studio solution and project files
-```
-
-The `Shared/` framework was provided as university scaffolding for rendering, input, and visualisation. The animation systems inside `Hierarchy/` were independently implemented.
+Although demonstrated through an articulated aircraft and animated robot, the engineering concepts explored are applicable to graphics engines, simulation software and interactive real-time applications.
 
 ---
 
-## 🛠 Technologies
+## Key Features
 
-- C++
+- Parent–child transformation hierarchy
+- Recursive world matrix calculation
+- Procedural aircraft animation
+- Keyframe robot animation
+- Animation blending between clips
+- XML-based animation loading
+- Multiple interactive camera modes
+- Height-map terrain rendering
+- Object-pooled projectile system
+- Real-time DirectX rendering
+
+---
+
+## Technologies & Engineering Practices
+
+### Development
+
+- C++20
 - DirectX 11
-- Visual Studio
-- Windows SDK
-- Real-time animation systems
-- Forward kinematics
+- DirectXMath
+- HLSL
+- TinyXML2
+- Visual Studio 2022
+- Git
+- Git Submodules
+
+### Engineering Practices
+
+- Hierarchical Scene Graphs
+- Keyframe Animation
+- Animation Blending
+- Recursive Algorithms
+- Object-Oriented Design
+- Separation of Concerns
+- Data-Driven Design
+- Real-Time Rendering
+- Matrix Mathematics
+- Modular Software Design
 
 ---
 
-## 🚀 Build & Run
+## Architecture Highlights
 
-### Requirements
-
-- Visual Studio 2019 or 2022
-- Windows 10/11 SDK
-- DirectX 11-compatible environment
-
-### Steps
-
-1. Clone the repository.
-2. Open the Visual Studio solution file.
-3. Set the configuration to **x64 → Debug** or **Release**.
-4. Build and run the project.
-
-A standalone executable is also available in the repository release/download section.
+- Recursive parent–child transformation propagation
+- Local and world transformation separation
+- Shared hierarchy supporting procedural and keyframe animation
+- Animation parsing separated from playback
+- Pose evaluation independent of rendering
+- Named component lookup for articulated models
+- Reusable animation controller supporting multiple clips
+- Gameplay systems driven by hierarchy world transforms
 
 ---
 
-## 🔭 Future Work
+## Engineering Outcome
 
-- GPU skinning with vertex shader bone blending
-- Inverse kinematics for procedural pose control
-- Improved animation blending and layered animation masks
-- Advanced debug visualisation tools
-- Integration with gameplay and collision systems
-- DirectX 12 rendering backend exploration
+Hierarchical Animation demonstrates how the mathematical principles behind articulated animation can be translated into a structured C++ graphics application. By combining recursive transformation hierarchies, imported keyframe animation and procedural component movement, the project explores scene graphs, animation systems and graphics programming while maintaining a modular software architecture.
+
+Rather than functioning as a complete game engine, the project serves as a practical investigation into hierarchical animation, demonstrating experience with transformation mathematics, animation pipelines and the engineering considerations involved in building maintainable real-time graphics systems.
 
 ---
-
-## 🙏 Acknowledgements
-
-- The `Shared/` runtime framework was provided as university course scaffolding.
-- Hierarchical and skeletal animation systems were independently implemented by the author.
-- DirectX documentation and course materials were referenced during development.
-  
- ---
